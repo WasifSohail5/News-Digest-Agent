@@ -6,7 +6,7 @@
 
 > Stay informed without the information overload! An automated solution that delivers curated news directly to your inbox.
 
-![News Digest Banner](screenshots/image.png)
+![News Digest Banner](Screenshots/image.png)
 
 ## ✨ Overview
 
