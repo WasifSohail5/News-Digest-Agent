@@ -39,8 +39,8 @@ The **News Digest Agent** is an automated workflow built with [n8n](https://n8n.
 
 ```
 News-Digest-Agent/
-│── workflows/              # Exported n8n workflows (.json)
-│── docs/                   # Screenshots, diagrams
+│── News-Digest-Agent.json  # Exported n8n workflows (.json)
+│── Screenshots/            # Screenshots, diagrams
 │── README.md               # Project documentation
 ```
 
