@@ -6,7 +6,7 @@
 
 > Stay informed without the information overload! An automated solution that delivers curated news directly to your inbox.
 
-![News Digest Banner](https://via.placeholder.com/1200x300/3498db/ffffff?text=News+Digest+Agent)
+![News Digest Banner]()
 
 ## ✨ Overview
 
