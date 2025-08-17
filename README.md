@@ -101,7 +101,7 @@ Edit the **HTTP Request** node to modify your news topics:
 
 ```json
 {
-  "topics": ["AI", "Technology", "Business", "Science"]
+  "topics": ["technology", "artificial intelligence", "sports"]
 }
 ```
 
