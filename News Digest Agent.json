@@ -1,0 +1,271 @@
+{
+  "name": "News Digest Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -544,
+        -144
+      ],
+      "id": "c3bd9a39-4a71-4d25-8f33-8fa18c831182",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/everything?q=AI&language=en&pageSize=3&apiKey=e083a492da5342cd8e86fe7acb4c186c",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        -144
+      ],
+      "id": "a086231e-10f3-4cd7-8aa2-7a787a29bb1d",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Helper: safely escape HTML (in case any field has special chars)\nconst escapeHtml = (s = \"\") =>\n  s.replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#39;'}[c]));\n\n// Helper: format date nicely\nconst formatDate = (iso) => {\n  if (!iso) return \"\";\n  const d = new Date(iso);\n  // Format like: Aug 17, 2025 • 08:05\n  return d.toLocaleString(\"en-US\", {\n    month: \"short\", day: \"2-digit\", year: \"numeric\",\n    hour: \"2-digit\", minute: \"2-digit\"\n  });\n};\n\n// Pull articles from previous HTTP node\nconst articles = (items[0]?.json?.articles ?? []).slice(0, 3);\n\nconst today = new Date().toLocaleDateString(\"en-US\", {\n  weekday: \"long\", year: \"numeric\", month: \"long\", day: \"numeric\"\n});\n\nconst subject = `Daily News Digest — ${today}`;\n\nconst html = `<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<title>${escapeHtml(subject)}</title>\n<style>\n  /* Simple, safe, inline-friendly styles */\n  body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, Helvetica, sans-serif; color:#111827; }\n  .wrapper { max-width: 680px; margin: 0 auto; padding: 24px 16px; }\n  .card { background:#ffffff; border-radius:14px; padding: 20px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }\n  .header {\n    background: linear-gradient(135deg,#4f46e5,#06b6d4);\n    color:#fff; border-radius:14px; padding: 18px 20px; margin-bottom: 16px;\n  }\n  .header h1 { margin:0; font-size: 20px; line-height:1.3; }\n  .header small { opacity:0.9; }\n  .article { display:flex; gap:14px; padding:14px 0; border-bottom: 1px solid #eef2f7; }\n  .article:last-child { border-bottom: none; }\n  .thumb { flex: 0 0 120px; max-width:120px; }\n  .thumb img { width:120px; height:80px; object-fit:cover; border-radius:10px; background:#e5e7eb; }\n  .content { flex:1; min-width:0; }\n  .title { font-weight:700; font-size:16px; margin:0 0 6px 0; }\n  .meta { font-size:12px; color:#6b7280; margin-bottom:6px; }\n  .desc { font-size:14px; color:#374151; margin:0 0 8px 0; }\n  .btn {\n    display:inline-block; font-size:13px; text-decoration:none; padding:8px 12px;\n    border-radius:10px; background:#111827; color:#fff;\n  }\n  .source { display:inline-block; font-size:12px; color:#4b5563; margin-left:8px; }\n  .footer { text-align:center; color:#6b7280; font-size:12px; margin-top:16px; }\n  @media (max-width: 520px) {\n    .article { flex-direction:column; }\n    .thumb { max-width:100%; }\n    .thumb img { width:100%; height:180px; }\n  }\n</style>\n</head>\n<body>\n  <div class=\"wrapper\">\n    <div class=\"header\">\n      <h1>📰 Your Daily News Digest</h1>\n      <small>${escapeHtml(today)}</small>\n    </div>\n    <div class=\"card\">\n      ${\n        articles.length === 0\n          ? `<p style=\"margin:0;\">No articles found for today.</p>`\n          : articles.map((a, i) => {\n              const title = escapeHtml(a?.title || \"Untitled\");\n              const url = a?.url || \"#\";\n              const img = a?.urlToImage || \"\";\n              const source = escapeHtml(a?.source?.name || \"\");\n              const published = formatDate(a?.publishedAt);\n              const rawDesc = a?.description || a?.content || \"\";\n              const desc = escapeHtml(rawDesc.length > 180 ? rawDesc.slice(0,177) + \"...\" : rawDesc);\n\n              return `\n              <div class=\"article\">\n                <div class=\"thumb\">\n                  ${img ? `<img src=\"${img}\" alt=\"Thumbnail\" />` : `<img alt=\"No image\" />`}\n                </div>\n                <div class=\"content\">\n                  <p class=\"title\">${i + 1}. ${title}</p>\n                  <div class=\"meta\">\n                    ${published ? `${published}` : \"\"} ${source ? `<span class=\"source\">• ${source}</span>` : \"\"}\n                  </div>\n                  ${desc ? `<p class=\"desc\">${desc}</p>` : ``}\n                  <a class=\"btn\" href=\"${url}\">Read full story</a>\n                </div>\n              </div>`;\n            }).join(\"\")\n      }\n    </div>\n    <div class=\"footer\">\n      You’re receiving this automated digest from your n8n workflow.\n    </div>\n  </div>\n</body>\n</html>`;\n\n// Return html + subject for the Email node.\nreturn [{ json: { html, subject } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        -256
+      ],
+      "id": "fdefa1a8-c9b9-451f-8738-a44173927820",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "sendTo": "wasifsohail456@gmail.com",
+        "subject": "Daily News Digest",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1408,
+        -128
+      ],
+      "id": "fe4bcb11-697b-4ae8-9623-5d65137f3164",
+      "name": "Send a message",
+      "webhookId": "16b26fda-cbc6-4be8-a146-42c0628ad85e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "p1JExKLnYSQ2owdj",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "df5dca5f-87e8-4c45-943f-0bb1c7dc542d",
+              "leftValue": "={{$json[\"articles\"].length}}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        -144
+      ],
+      "id": "97613548-46a8-4b28-934d-a777c764234c",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        0
+      ],
+      "id": "1c91baa8-c0a3-40a2-90d0-e76050d1c22e",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d0331084-fe75-4ed8-8d1d-fbf45b854dac",
+              "name": "Topics",
+              "value": "[\"technology\", \"artificial intelligence\", \"sports\"]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -336,
+        -144
+      ],
+      "id": "484a710a-2ccf-440f-aa9a-a1c334188f9d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "batchSize": "=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -128,
+        -144
+      ],
+      "id": "81e17f7e-d734-463f-be05-ddd6202be3b9",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        80,
+        -144
+      ],
+      "id": "ec531b22-78aa-404d-9071-e60d59be52bf"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8d203b27-4290-4a22-a5cf-f6002b0544b1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ea32f0c50306c2afdbffe3fe5438b93c95cb06b5a0a1a5bbfa22c3926040cbc1"
+  },
+  "id": "OnOum7d8iYWU1Kgb",
+  "tags": []
+}
