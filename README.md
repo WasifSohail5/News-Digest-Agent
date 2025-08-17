@@ -123,12 +123,12 @@ Configure the **Schedule Trigger** node:
 
 <details>
 <summary>📌 View Workflow Example</summary>
-<img src="https://via.placeholder.com/800x400/3498db/ffffff?text=News+Digest+Workflow" alt="Workflow Example">
+<img src="screenshots/workflow.png" alt="Workflow Example">
 </details>
 
 <details>
 <summary>📌 View Email Output Example</summary>
-<img src="https://via.placeholder.com/800x600/27ae60/ffffff?text=Email+Digest+Example" alt="Email Digest Example">
+<img src="screenshots/email_output.png" alt="Email Digest Example">
 </details>
 
 ## 🗺️ Roadmap
@@ -155,11 +155,11 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## 📬 Contact
 
-**Wasif Sohail** - [GitHub Profile](https://github.com/Wasif-Sohail5)
+**Wasif Sohail** - [GitHub Profile](https://github.com/Wasif-Sohail55)
 
 Email: wasifsohail66@gmail.com
 
-Project Link: [https://github.com/Wasif-Sohail5/News-Digest-Agent](https://github.com/Wasif-Sohail5/News-Digest-Agent)
+Project Link: [https://github.com/Wasif-Sohail55/News-Digest-Agent](https://github.com/Wasif-Sohail55/News-Digest-Agent)
 
 ---
 
