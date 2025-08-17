@@ -123,12 +123,12 @@ Configure the **Schedule Trigger** node:
 
 <details>
 <summary>📌 View Workflow Example</summary>
-<img src="screenshots/workflow.png" alt="Workflow Example">
+<img src="Screenshots/workflow.png" alt="Workflow Example">
 </details>
 
 <details>
 <summary>📌 View Email Output Example</summary>
-<img src="screenshots/email_output.png" alt="Email Digest Example">
+<img src="Screenshots/email.png" alt="Email Digest Example">
 </details>
 
 ## 🗺️ Roadmap
